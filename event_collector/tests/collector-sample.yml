@@ -1,0 +1,76 @@
+---
+- event_name: 1-A
+  version: 1.0
+  use: True
+  event:
+    type: data-collector
+    schedule_name: smart-lock-master
+
+  conditions:
+    - name: using global value
+      code: |
+        def main(**kwargs):
+            if 'abc' not in kwargs['_gv']:
+                kwargs['_gv']['abc'] = 0
+            kwargs['_gv']['abc'] += 1
+            print(kwargs['_gv']['abc'])
+            return False
+    - code: |
+        # This code never executes. because of just before the code was not passed.
+        def main(**kwargs):
+            print(kwargs)
+            return True
+  actions:
+    - function: event.action.redis.messageq.publish
+      arguments:
+        value: |
+          def main():
+              print('hello')
+              return 1
+  description: |
+    Test
+
+- event_name: 1-B
+  version: 1.0
+  use: True
+  event:
+    type: data-collector
+    schedule_name: smart-lock-master
+
+  conditions:
+    - name: always pass
+      code: |
+        def main(**kwargs):
+            return True
+  actions:
+    - function: system.event.action.redis.messageq.publish
+      arguments: |
+          import json
+
+          def seperate_values(data):
+              d = list()
+              for k, v in data['data'].items():
+                  # CH01-ID01 채널과 아이디 파싱
+                  d.append(dict(ch=int(k[2:4]), id=int(k[7:]), value=int(v['value'])))
+              return d
+
+          def main(**kwargs):
+              # 변환
+
+              d = seperate_values(kwargs['data'])
+              if 'smart-door' not in kwargs['_gv']:
+                  kwargs['_gv']['smart-door'] = d
+                  return
+
+              data = list()
+              for i, v in enumerate(kwargs['_gv']['smart-door']):
+                  if v not in d:
+                      data.append(d[i])
+              if not data:
+                  return None
+              kwargs['_gv']['smart-door'] = d
+              data = json.dumps(data)
+              return ('smart-door', data)
+  description: |
+    Test
+
