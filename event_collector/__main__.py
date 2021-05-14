@@ -1,10 +1,7 @@
 import argparse
 import yaml
 
-from event_collector.utils.logger import get_logger
 from event_collector.app.app import collector, app
-
-logger = get_logger('main')
 
 
 def argument_parser():

@@ -29,9 +29,14 @@ setup(
         'redis'
     ],
     tests_require=tests_require,
+    package_dir={"event_collector": "event_collector"},
     packages=find_packages(
-        exclude=['tests', 'tests.*']),
-    package_data={},
+        where='.',
+        include=['event_collector',
+                 'event_collector.*'],
+        exclude=['dummy-*', 'tests', 'tests.*']),
+    package_data={
+        "": ["*.cfg"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
