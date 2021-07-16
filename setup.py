@@ -21,6 +21,7 @@ setup(
     license="MIT",
     keywords=[],
     install_requires=[
+        'apscheduler',
         'click==7.1.2',
         'celery',
         'flask==1.1.1',
