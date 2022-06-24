@@ -1,18 +1,17 @@
-import flask
-import operator
+import logging
 from flask import request, abort, make_response
 from flask import jsonify, redirect, url_for
 from functools import wraps
 from event_collector.app import CustomBlueprint
-from event_collector.utils.logger import get_logger
 
 from event_collector.app import (
     ExceptionResponse,
     ExceptionScheduleReduplicated,
     NotFound)
 
-logger = get_logger('api-v1')
 bp = CustomBlueprint('api', __name__)
+
+logger = logging.getLogger(__name__)
 
 
 ###############################################################################
